@@ -3,15 +3,16 @@ FROM resin/rpi-raspbian
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 
-RUN sed -i 's/stretch/buster/g' /etc/apt/sources.list
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
+RUN curl http://mirrordirector.raspbian.org/raspbian/pool/main/n/numactl/numactl_2.0.12-1_armhf.deb -o numactl.deb && dpkg -i numactl.deb
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
 		ca-certificates \
 		gnupg dirmngr \
 		jq \
 		numactl \
-		procps \
-	&& rm -rf /var/lib/apt/lists/*
+		procps 
+RUN rm -rf /var/lib/apt/lists/*
 
 # grab gosu for easy step-down from root (https://github.com/tianon/gosu/releases)
 ENV GOSU_VERSION 1.10
