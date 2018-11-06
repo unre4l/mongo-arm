@@ -13,8 +13,7 @@ script:
 - >
   if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
-    TAG=$(grep "ENV MONGO_VERSION" Dockerfile | awk 'NF>1{print $NF}')
-    docker tag unre4l/mongo-arm unre4l/mongo-arm:$TAG
-    docker push unre4l/mongo-arm:$TAG
+    docker tag unre4l/mongo-arm unre4l/mongo-arm:$(grep "ENV MONGO_VERSION" Dockerfile | awk 'NF>1{print $NF}')
+    docker push unre4l/mongo-arm:$(grep "ENV MONGO_VERSION" Dockerfile | awk 'NF>1{print $NF}')
     docker push unre4l/mongo-arm
   fi
