@@ -1,8 +1,9 @@
-FROM hypriot/rpi-alpine
+FROM resin/rpi-raspbian
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 
+RUN sed -i 's/stretch/buster/g' /etc/apt/sources.list
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ca-certificates \
