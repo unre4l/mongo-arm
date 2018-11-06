@@ -17,52 +17,6 @@ RUN apt-get install -y --no-install-recommends \
 		procps 
 RUN rm -rf /var/lib/apt/lists/*
 
-# grab gosu for easy step-down from root (https://github.com/tianon/gosu/releases)
-ENV GOSU_VERSION 1.10
-# grab "js-yaml" for parsing mongod's YAML config files (https://github.com/nodeca/js-yaml/releases)
-ENV JSYAML_VERSION 3.10.0
-
-RUN set -ex; \
-	\
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		wget \
-	; \
-	rm -rf /var/lib/apt/lists/*; \
-	\
-	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	gpgconf --kill all; \
-	rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-	chmod +x /usr/local/bin/gosu; \
-	gosu nobody true; \
-	\
-	wget -O /js-yaml.js "https://github.com/nodeca/js-yaml/raw/${JSYAML_VERSION}/dist/js-yaml.js"; \
-# TODO some sort of download verification here
-	\
-	apt-get purge -y --auto-remove wget
-
-RUN mkdir /docker-entrypoint-initdb.d
-
-ENV GPG_KEYS \
-# pub   4096R/91FA4AD5 2016-12-14 [expires: 2018-12-14]
-#       Key fingerprint = 2930 ADAE 8CAF 5059 EE73  BB4B 5871 2A22 91FA 4AD5
-# uid                  MongoDB 3.6 Release Signing Key <packaging@mongodb.com>
-	2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
-# https://docs.mongodb.com/manual/tutorial/verify-mongodb-packages/#download-then-import-the-key-file
-RUN set -ex; \
-	export GNUPGHOME="$(mktemp -d)"; \
-	for key in $GPG_KEYS; do \
-		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done; \
-	gpg --export $GPG_KEYS > /etc/apt/trusted.gpg.d/mongodb.gpg; \
-	gpgconf --kill all; \
-	rm -r "$GNUPGHOME"; \
-	apt-key list
 
 # Allow build-time overrides (eg. to build image with MongoDB Enterprise version)
 # Options for MONGO_PACKAGE: mongodb-org OR mongodb-enterprise
