@@ -6,6 +6,7 @@ RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 RUN apt-get update
 
 RUN apt-get install wget
+RUN wget -O libnuma.deb "http://mirrordirector.raspbian.org/raspbian/pool/main/n/numactl/libnuma1_2.0.12-1_armhf.deb" && dpkg -i libnuma.deb
 RUN wget -O numactl.deb "http://mirrordirector.raspbian.org/raspbian/pool/main/n/numactl/numactl_2.0.12-1_armhf.deb" && dpkg -i numactl.deb
 
 RUN apt-get install -y --no-install-recommends \
