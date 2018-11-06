@@ -33,7 +33,7 @@ RUN echo "deb http://$MONGO_REPO/apt/debian stretch/${MONGO_PACKAGE%-unstable}/$
 
 RUN set -x \
 	&& apt-get update \
-	&& apt-get install -y \
+	&& apt-get install -y apt-transport-https \
 		${MONGO_PACKAGE}=$MONGO_VERSION \
 		${MONGO_PACKAGE}-server=$MONGO_VERSION \
 		${MONGO_PACKAGE}-shell=$MONGO_VERSION \
