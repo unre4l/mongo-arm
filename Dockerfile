@@ -3,9 +3,11 @@ FROM resin/rpi-raspbian
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 
+RUN apt-get update
+
+RUN apt-get install wget
 RUN wget -O numactl.deb "http://mirrordirector.raspbian.org/raspbian/pool/main/n/numactl/numactl_2.0.12-1_armhf.deb" && dpkg -i numactl.deb
 
-RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
 		ca-certificates \
 		gnupg dirmngr \
